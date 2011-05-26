@@ -22,16 +22,14 @@ class DraggerTest < Test::Unit::TestCase
     end
     
     should "ignore invalid content such as comments, etc. even if it shares the same parent as valid article content" do
-      assert_match(/Associated\sPress$/i, @net.content)
-    end
-    
-    should "extract links from content" do
-      assert_equal("Polling done earlier this week by NBC", @net.links.first[:text])
-      assert_equal("John Ensign", @net.links.last[:text])
+      assert_no_match(/Report Abuse/, @net.content)
     end
     
     should "extract only links within the content area" do
-      assert_equal(@net.links.size, 23)
+      assert_equal("Polling done earlier this week by NBC", @net.links.first[:text])
+      assert_equal("John Ensign", @net.links.last[:text])
+      unwanted_link = @net.links.find{|l| l[:text] =~ /Get This Widget.+/i}
+      assert unwanted_link.nil?, "Found unwanted link in link collection."
     end
   end
 end

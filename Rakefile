@@ -12,7 +12,6 @@ begin
     gem.authors = ["Caged", 'subimage']
     gem.add_development_dependency "thoughtbot-shoulda"
     gem.add_dependency 'nokogiri'
-    gem.add_dependency 'tidy'
     gem.add_dependency 'mofo'
   end
 rescue LoadError

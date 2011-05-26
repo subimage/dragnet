@@ -75,6 +75,7 @@ module Dragnet
       relatedMedia 
       related
       submitted
+      share
     )
     
     # Elements that we don't want to attempt to parse for content.
@@ -129,12 +130,13 @@ module Dragnet
       'sphere it!',
       'share this',
       'share',
-      '« previous',
-      'next comments »',
+      'previous',
+      'next comments',
       'links to this article',
       'my yahoo!',
       'google reader',
-      'rss'
+      'rss',
+      'get this widget'
     ]
     
     CONTROL_SCORE = 20
@@ -152,18 +154,22 @@ module Dragnet
     end
     
     def initialize(html)
+      # Replace 2 or more BR tags with a paragraph
       html.gsub!(/(<br\s*[^>]*>\n*){2,}/i, "<p />")
       
-      # Tidy.path = '/opt/local/lib/libtidy-0.99.0.dylib'
-      # cleaned = Tidy.open(:show_warnings => true) do |tidy|
-      #   tidy.options.output_xhtml = true
-      #   tidy.options.enclose_text = true
-      #   tidy.options.enclose_block_text = true
-      #   tidy.options.numeric_entities = true
-      #   cleaned = tidy.clean(html)
-      # end
+      # Attempt to find the first thing that looks like a comment.
+      # Remove everything after it.
+      #
+      # It'll break our HTML, but Nokogiri is nice and fixes that for us.
+      comment_node_pos = html.index(/(class|id)=.+comment.+/i)
+      if comment_node_pos
+        # Try to find opening tag.
+        opening_tag_pos = html.rindex('<', comment_node_pos)
+        # Kill all content after it.
+        html = html[0, opening_tag_pos]
+      end
 
-      @doc = Nokogiri::HTML(html)      
+      @doc = Nokogiri::HTML(html) 
       @title = @doc.at('//title').content rescue nil
       @links = []
       @high_score = -1
@@ -182,9 +188,11 @@ module Dragnet
       content = []
       content_containers = []
       
+      # Remove all the stuff we don't want from the HTML
       INVALID_ELEMENTS.each do |ename|
         @doc.css(ename).each { |e| e.remove }
       end
+            
       paragraphs = @doc.css('p').to_a
       
       # If we have no paragraphs or the paragraph content we got was empty
@@ -324,11 +332,19 @@ module Dragnet
             begin
               url = URI.parse(href)
               text = link.content.strip.downcase.gsub(/\n+/, ' ')
-              unless url.host.nil? || 
-                INVALID_LINK_HOSTS.include?(url.host.downcase.to_s) || 
-                INVALID_LINK_TEXT.include?(text) || text.empty?
-                  links << {:text => link.content.strip, :href => href}
+              
+              next if url.host.nil? || text.empty?
+              next if INVALID_LINK_HOSTS.include?(url.host.downcase.to_s)
+              found_invalid_link = false
+              INVALID_LINK_TEXT.each do |bad_link_text|
+                if text.index(/.*#{bad_link_text}.*/i) != nil
+                  found_invalid_link = true
+                  break
+                end
               end
+              next if found_invalid_link
+
+              links << {:text => link.content.strip, :href => href}
             rescue 
               
             end

@@ -3,7 +3,7 @@ require 'rubygems'
 require 'nokogiri'
 require 'open-uri'
 require 'pp'
-require 'tidy'
+#require 'tidy'
 require 'uri'
 require 'mofo'
 

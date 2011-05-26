@@ -5,17 +5,16 @@ require 'test/unit'
 require 'shoulda'
 require 'dragnet'
 
-def load_data(name)
-  File.read(File.join(File.dirname(__FILE__), 'data', "#{name}.html"))
-end
-
-def sample_with_microformat
-  load_data('public-policy-polling')
-end
-
-def sample_with_embedded_links
-  load_data('the-fix')
-end
-
 class Test::Unit::TestCase
+  def load_data(name)
+    File.read(File.join(File.dirname(__FILE__), 'data', "#{name}.html"))
+  end
+
+  def sample_with_microformat
+    load_data('public-policy-polling')
+  end
+
+  def sample_with_embedded_links
+    load_data('the-fix')
+  end
 end
