@@ -45,5 +45,22 @@ class DraggerTest < Test::Unit::TestCase
       end
     end 
     
+    context "for pages with comment links before content" do
+      setup do
+        @net = Dragnet::Dragger.drag!(sample_with_comment_link_at_top)
+      end
+      
+      should "still return proper content, and not chop out body" do
+        assert_match(
+          /I hear they want a point guard/, @net.content,
+          "Should have proper body content"
+        )
+        assert_no_match(
+          /I actually really like Kimba, and he can score/, @net.content,
+          "Should not contain first comment body"
+        )
+      end
+    end
+    
   end
 end

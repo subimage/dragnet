@@ -158,15 +158,14 @@ module Dragnet
       # Replace 2 or more BR tags with a paragraph
       html.gsub!(/(<br\s*[^>]*>\n*){2,}/i, "<p />")
       
-      # Attempt to find the first thing that looks like a comment.
-      # Remove everything after it.
-      #
-      # It'll break our HTML, but Nokogiri is nice and fixes that for us.
-      comment_node_pos = html.index(/(class|id)=.+comment.+/i)
+      # Search backwards in the document for items with class names
+      # or IDs with "comment".
+      comment_node_pos = html.rindex(/(class|id)=.+comment.+/i)
       if comment_node_pos
         # Try to find opening tag.
         opening_tag_pos = html.rindex('<', comment_node_pos)
         # Kill all content after it.
+        # It'll break our HTML, but Nokogiri is nice and fixes that for us.
         html = html[0, opening_tag_pos]
       end
 

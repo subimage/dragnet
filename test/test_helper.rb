@@ -21,4 +21,8 @@ class Test::Unit::TestCase
   def sample_with_sidebars
     load_data('deftones-in-louisville')
   end
+  
+  def sample_with_comment_link_at_top
+    load_data('comment-link-at-top')
+  end
 end
