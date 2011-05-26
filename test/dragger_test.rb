@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class DragnetTest < Test::Unit::TestCase
+class DraggerTest < Test::Unit::TestCase
   context "When extracting content from a page with an hEntry item" do
     setup do
       @net = Dragnet::Dragger.drag!(sample_with_microformat)

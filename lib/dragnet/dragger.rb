@@ -54,6 +54,7 @@ module Dragnet
       footnote 
       listing 
       menu 
+      meta
       module 
       nav 
       navbar 
@@ -73,6 +74,7 @@ module Dragnet
       socialTools 
       relatedMedia 
       related
+      submitted
     )
     
     # Elements that we don't want to attempt to parse for content.
