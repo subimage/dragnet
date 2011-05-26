@@ -17,4 +17,8 @@ class Test::Unit::TestCase
   def sample_with_embedded_links
     load_data('the-fix')
   end
+  
+  def sample_with_sidebars
+    load_data('deftones-in-louisville')
+  end
 end

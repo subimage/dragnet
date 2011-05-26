@@ -76,6 +76,7 @@ module Dragnet
       related
       submitted
       share
+      print
     )
     
     # Elements that we don't want to attempt to parse for content.
@@ -338,8 +339,8 @@ module Dragnet
               found_invalid_link = false
               INVALID_LINK_TEXT.each do |bad_link_text|
                 if text.index(/.*#{bad_link_text}.*/i) != nil
+                  link.remove # Remove the bad link from our content.
                   found_invalid_link = true
-                  break
                 end
               end
               next if found_invalid_link

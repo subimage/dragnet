@@ -16,20 +16,34 @@ class DraggerTest < Test::Unit::TestCase
     end
   end
   
-  context "When Extracting Content" do
-    setup do
-      @net = Dragnet::Dragger.drag!(sample_with_embedded_links)
-    end
+  context "When extracting content" do
     
-    should "ignore invalid content such as comments, etc. even if it shares the same parent as valid article content" do
-      assert_no_match(/Report Abuse/, @net.content)
-    end
+    context "for pages with embedded links" do
+      setup do
+        @net = Dragnet::Dragger.drag!(sample_with_embedded_links)
+      end
     
-    should "extract only links within the content area" do
-      assert_equal("Polling done earlier this week by NBC", @net.links.first[:text])
-      assert_equal("John Ensign", @net.links.last[:text])
-      unwanted_link = @net.links.find{|l| l[:text] =~ /Get This Widget.+/i}
-      assert unwanted_link.nil?, "Found unwanted link in link collection."
-    end
+      should "ignore invalid content such as comments, etc. even if it shares the same parent as valid article content" do
+        assert_no_match(/Report Abuse/, @net.content)
+      end
+    
+      should "extract only links within the content area" do
+        assert_equal("Polling done earlier this week by NBC", @net.links.first[:text])
+        assert_equal("John Ensign", @net.links.last[:text])
+        unwanted_link = @net.links.find{|l| l[:text] =~ /Get This Widget.+/i}
+        assert unwanted_link.nil?, "Found unwanted link in link collection."
+      end
+    end # / embedded links
+    
+    context "for pages with heavy banners" do
+      setup do
+        @net = Dragnet::Dragger.drag!(sample_with_sidebars)
+      end
+      
+      should "ignore print links in the content" do
+        assert_no_match(/^Print/, @net.content)
+      end
+    end 
+    
   end
 end
