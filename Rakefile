@@ -8,10 +8,12 @@ begin
     gem.summary = %Q{Extracts readable content from a page}
     gem.description = %Q{Given a url Dragnet will attempt to analyze and extract the intended readable content and embedded links from a page}
     gem.email = "justin@activereload.net"
-    gem.homepage = "http://github.com/Caged/dragnet"
-    gem.authors = ["Caged"]
+    gem.homepage = "http://github.com/subimage/dragnet"
+    gem.authors = ["Caged", 'subimage']
     gem.add_development_dependency "thoughtbot-shoulda"
-    # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
+    gem.add_dependency 'nokogiri'
+    gem.add_dependency 'tidy'
+    gem.add_dependency 'mofo'
   end
 rescue LoadError
   puts "Jeweler (or a dependency) not available. Install it with: sudo gem install jeweler"
