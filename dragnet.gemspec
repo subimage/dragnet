@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{dragnet}
-  s.version = "0.3.2"
+  s.version = "0.4.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Caged", "subimage"]
@@ -28,6 +28,7 @@ Gem::Specification.new do |s|
      "dragnet.gemspec",
      "lib/dragnet.rb",
      "lib/dragnet/dragger.rb",
+     "test/data/deftones-in-louisville.html",
      "test/data/public-policy-polling.html",
      "test/data/the-fix.html",
      "test/dragger_test.rb",
