@@ -77,6 +77,8 @@ module Dragnet
       submitted
       share
       print
+      wp-caption-text
+      caption
     )
     
     # Elements that we don't want to attempt to parse for content.
@@ -238,7 +240,7 @@ module Dragnet
             content_containers.include?(child)
           end
         end
-      end      
+      end
       
       # Remove all content elements whose children are all negative or 0 values.
       # Remove all children with negative or zero values
@@ -250,17 +252,13 @@ module Dragnet
         else
           container.css('*').each do |child|
             pp child.content_score if DEBUG and child.content.include?(DEBUG_CONTENT)
-            if child.content_score && child.content_score <= 0
-              child.remove 
-            end
+            child.remove if child.content_score && child.content_score <= 0
           end
         end
-        
         # Extract all the links from what we assume is the content containers
         @links.concat(extract_links_from_content(container))
-        content << cleanup_content(container.content)
+        content << get_text_from_container(container)
       end
-      
       @content = content.join(' ')
     end  
     
@@ -276,6 +274,18 @@ module Dragnet
       content.gsub!('<![CDATA[', '')
       content.gsub!(']]>', ' ')
       content.strip
+    end
+    
+    # Returns a list of nodes, text + html.
+    # Iterate through them and add our own line breaks.
+    # Provides cleaner parsing.    
+    def get_text_from_container(container_node)
+      text = ""
+      container_node.children.each do |node|
+        text << node.text.gsub(/[\s^\n]{2,}/,' ')
+        text << "\n\n" if %w(p div).include?(node.name)
+      end
+      return text.gsub(/[\n]{3,}/,"\n\n").strip
     end
     
     def build_score(parent, element)

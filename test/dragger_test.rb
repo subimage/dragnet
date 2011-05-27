@@ -23,7 +23,6 @@ class DraggerTest < Test::Unit::TestCase
   end
   
   context "When extracting content" do
-    
     context "for pages with embedded links" do
       setup do
         @net = Dragnet::Dragger.drag!(sample_with_embedded_links)
@@ -48,6 +47,11 @@ class DraggerTest < Test::Unit::TestCase
       
       should "ignore print links in the content" do
         assert_no_match(/^Print/, @net.content)
+      end
+      
+      should "respect linebreaks" do
+        expected_match = /Multi-platinum and grammy award winning recording artist Deftones will make a tour stop in Louisville this Friday at Expo 5\. Supporting Deftones on the bill is The Dillinger Escape Plan and Le Butcherettes\..*\n\nThe Deftones, a post-grunge alt-metal band are one of the most emotionally charged musical acts to emerge since/
+        assert_match(expected_match, @net.content)
       end
     end 
     
