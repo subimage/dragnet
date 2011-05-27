@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Caged", "subimage"]
-  s.date = %q{2011-05-25}
+  s.date = %q{2011-05-26}
   s.description = %q{Given a url Dragnet will attempt to analyze and extract the intended readable content and embedded links from a page}
   s.email = %q{justin@activereload.net}
   s.extra_rdoc_files = [
@@ -28,6 +28,7 @@ Gem::Specification.new do |s|
      "dragnet.gemspec",
      "lib/dragnet.rb",
      "lib/dragnet/dragger.rb",
+     "test/data/comment-link-at-top.html",
      "test/data/deftones-in-louisville.html",
      "test/data/public-policy-polling.html",
      "test/data/the-fix.html",

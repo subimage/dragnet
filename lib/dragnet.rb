@@ -3,8 +3,10 @@ require 'rubygems'
 require 'nokogiri'
 require 'open-uri'
 require 'pp'
-#require 'tidy'
 require 'uri'
+# Should be using: https://github.com/speedmax/mofo
+# ...but can't require that in the gemspec because it shares same name
+# as a released gem :(
 require 'mofo'
 
 $:.unshift(File.dirname(__FILE__))

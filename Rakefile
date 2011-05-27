@@ -4,12 +4,12 @@ require 'rake'
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
-    gem.name = "dragnet"
+    gem.name = "subimage-dragnet"
     gem.summary = %Q{Extracts readable content from a page}
     gem.description = %Q{Given a url Dragnet will attempt to analyze and extract the intended readable content and embedded links from a page}
-    gem.email = "justin@activereload.net"
+    gem.email = "subimage@gmail.com"
     gem.homepage = "http://github.com/subimage/dragnet"
-    gem.authors = ["Caged", 'subimage']
+    gem.authors = ['subimage', 'Caged']
     gem.add_development_dependency "thoughtbot-shoulda"
     gem.add_dependency 'nokogiri'
     gem.add_dependency 'mofo'
