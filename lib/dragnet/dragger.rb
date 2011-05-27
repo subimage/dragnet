@@ -265,9 +265,14 @@ module Dragnet
     end  
     
     def cleanup_content(content)
-      content.gsub!(/[\r\n\t]+/i, ' ')
-      content.gsub!(/\s{3,}/, '')
-      content.gsub!(/<\/?[^>]*>/, ' ')
+      # Attempt to replace paragraph tags with linebreaks
+      content.gsub!(/<p>/, '')
+      content.gsub!(/<\/p>/, "\n")
+      content.gsub!(/<br.*>/, "\n")
+      #content.gsub!(/[\r\n\t]+/i, ' ')
+      content.gsub!(/ {2,}/, ' ')
+      # Kill all remaining HTML tags
+      content.gsub!(/<\/?[^>]*>/, '')
       content.gsub!('<![CDATA[', '')
       content.gsub!(']]>', ' ')
       content.strip

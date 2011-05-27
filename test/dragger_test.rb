@@ -14,6 +14,12 @@ class DraggerTest < Test::Unit::TestCase
     should "only extract links from hentry content" do
       assert_equal(@net.links.size, 0)
     end
+    
+    should "respect linebreaks" do
+      @net = Dragnet::Dragger.drag!(load_data('microformat'))
+      expected_match = /.*I actually love the song &ldquo;You&rsquo;ve Seen The Butcher,&rdquo; from the Deftones&rsquo; most recent LP, Diamond Eyes\. But this&hellip;remix\? It makes me feel like I should be down in South Beach or something.\n\nCalled the &ldquo;Mustard Pimp remix,&rdquo; you can hear it here and download it here, too\..*/
+      assert_match(expected_match, @net.content)
+    end
   end
   
   context "When extracting content" do
