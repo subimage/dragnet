@@ -1,12 +1,12 @@
 require 'test_helper'
 
 class DraggerTest < Test::Unit::TestCase
-  context "When extracting content from a page with an hEntry item" do
+  context "Extracting content from microformat aware HTML" do
     setup do
       @net = Dragnet::Dragger.drag!(sample_with_microformat)
     end
 
-    should "parse hentry body as content" do
+    should "parse hEntry body as content" do
       assert(@net.content.include?("I got quite a vociferous e-mail today saying the only reason our Colorado polling was showing Michael Bennet and Bill Ritter"))
       assert_match(/Ritter\.$/, @net.content)
     end
@@ -20,9 +20,10 @@ class DraggerTest < Test::Unit::TestCase
       expected_match = /.*I actually love the song &ldquo;You&rsquo;ve Seen The Butcher,&rdquo; from the Deftones&rsquo; most recent LP, Diamond Eyes\. But this&hellip;remix\? It makes me feel like I should be down in South Beach or something.\n\nCalled the &ldquo;Mustard Pimp remix,&rdquo; you can hear it here and download it here, too\..*/
       assert_match(expected_match, @net.content)
     end
-  end
+  end # / microformat tests
   
-  context "When extracting content" do
+  context "Extracting content" do
+    
     context "for pages with embedded links" do
       setup do
         @net = Dragnet::Dragger.drag!(sample_with_embedded_links)
@@ -72,5 +73,24 @@ class DraggerTest < Test::Unit::TestCase
       end
     end
     
+  end # / extracting content
+  
+  context "Extracting author's name" do
+    
+    # For microformat / vcard enabled sites
+    should "be able to parse vcard markup" do
+      @net = Dragnet::Dragger.drag!(sample_with_microformat)
+      assert_equal "Tom Jensen", @net.author
+      
+      @net = Dragnet::Dragger.drag!(sample_with_comment_link_at_top)
+      assert_equal "Jason Jones", @net.author
+    end
+    
+    # For people adhering to google's markup standard outlined here:
+    # http://googlewebmastercentral.blogspot.com/2011/06/authorship-markup-and-web-search.html
+    should "find authors with google's authorship markup" do
+      @net = Dragnet::Dragger.drag!(load_data('ny-times-article'))
+      assert_equal "Sam Dolnick", @net.author
+    end
   end
 end

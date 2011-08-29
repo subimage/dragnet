@@ -175,10 +175,12 @@ module Dragnet
       @title = @doc.at('//title').content rescue nil
       @links = []
       @high_score = -1
+      @author = nil
       parse!
     end
     
     def parse!
+      @author = find_author(@doc)
       # First try to extract the content as a microformat
       @content = parse_as_microformat(@doc)
       unless @content.nil?
@@ -333,6 +335,26 @@ module Dragnet
     
     private
     
+      def find_author(doc)
+        # Try to find vcard first
+        auth_name_container = doc.css('.vcard .fn')
+        if auth_name_container && auth_name_container.size > 0
+          author = auth_name_container[0].content.strip
+        end
+        
+        # Next attempt to find google's "authorship" markup
+        doc.css('a').each do |link|
+          if link[:rel] == 'author'
+            author = link.content 
+            break
+          end
+        end
+        
+        author ||= ''
+        # Titleize author
+        return titleize(author)
+      end
+    
       def parse_as_microformat(doc)
         hEntry.find(:first, :text => doc.to_s).entry_content rescue nil
       end
@@ -374,6 +396,20 @@ module Dragnet
         @ancestor_ids ||= ancestors.collect {|c| c['id'] ? c['id'].split(' ') : nil }.flatten.uniq.compact
       
         [@ancestor_klasses, @ancestor_ids]
+      end
+    
+      SMALL_WORDS = %w{a an and as at but by for in of on or the v v. via vs vs.}
+      def titleize(value)
+        text = value.downcase
+        text.gsub!(/\b\w/) { |a| a.upcase }
+        text.gsub!(/\w\'\w*/) { |a| a.downcase }
+        text.split.map do |word|
+          if SMALL_WORDS.include?(word.downcase)
+            word.downcase
+          else
+            word
+          end
+        end.join(' ').gsub(/^\w/) { |c| c.upcase }
       end
     
   end
