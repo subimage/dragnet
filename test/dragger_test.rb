@@ -77,13 +77,17 @@ class DraggerTest < Test::Unit::TestCase
   
   context "Extracting author's name" do
     
-    # For microformat / vcard enabled sites
     should "be able to parse vcard markup" do
       @net = Dragnet::Dragger.drag!(sample_with_microformat)
       assert_equal "Tom Jensen", @net.author
       
       @net = Dragnet::Dragger.drag!(sample_with_comment_link_at_top)
       assert_equal "Jason Jones", @net.author
+    end
+    
+    should "be able to find author names if multiple classes applied to container" do
+      @net = Dragnet::Dragger.drag!(load_data('microformat'))
+      assert_equal "Chris Harris", @net.author
     end
     
     # For people adhering to google's markup standard outlined here:
