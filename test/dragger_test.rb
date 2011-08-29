@@ -17,7 +17,7 @@ class DraggerTest < Test::Unit::TestCase
     
     should "respect linebreaks" do
       @net = Dragnet::Dragger.drag!(load_data('microformat'))
-      expected_match = /.*I actually love the song &ldquo;You&rsquo;ve Seen The Butcher,&rdquo; from the Deftones&rsquo; most recent LP, Diamond Eyes\. But this&hellip;remix\? It makes me feel like I should be down in South Beach or something.\n\nCalled the &ldquo;Mustard Pimp remix,&rdquo; you can hear it here and download it here, too\..*/
+      expected_match = /.*It makes me feel like I should be down in South Beach or something.\n\nCalled the.*/
       assert_match(expected_match, @net.content)
     end
   end # / microformat tests
@@ -91,6 +91,17 @@ class DraggerTest < Test::Unit::TestCase
     should "find authors with google's authorship markup" do
       @net = Dragnet::Dragger.drag!(load_data('ny-times-article'))
       assert_equal "Sam Dolnick", @net.author
+    end
+    
+    should "return nil if no author" do
+      @net = Dragnet::Dragger.drag!(load_data('the-fix'))
+      assert_nil @net.author
+    end
+    
+    # 
+    should "be able to parse strings for author's name" do
+      @net = Dragnet::Dragger.drag!(load_data('caller-times'))
+      assert_equal "Alan Sculley", @net.author
     end
   end
 end

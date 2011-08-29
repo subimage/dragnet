@@ -336,6 +336,7 @@ module Dragnet
     private
     
       def find_author(doc)
+        author = nil
         # Try to find vcard first
         auth_name_container = doc.css('.vcard .fn')
         if auth_name_container && auth_name_container.size > 0
@@ -350,9 +351,16 @@ module Dragnet
           end
         end
         
-        author ||= ''
+        if author
+          author = titleize(author)
+          # Parse out extra text like "Written By Joe Blow"
+          regexp = /(written )?by ([a-z]+ [a-z]+).*/i
+          if match = author.match(regexp)
+            author = match[2]
+          end
+        end
         # Titleize author
-        return titleize(author)
+        return author
       end
     
       def parse_as_microformat(doc)
