@@ -79,33 +79,39 @@ class DraggerTest < Test::Unit::TestCase
     
     should "be able to parse vcard markup" do
       @net = Dragnet::Dragger.drag!(sample_with_microformat)
-      assert_equal "Tom Jensen", @net.author
+      assert_equal "Tom Jensen", @net.authors.first
       
       @net = Dragnet::Dragger.drag!(sample_with_comment_link_at_top)
-      assert_equal "Jason Jones", @net.author
+      assert_equal "Jason Jones", @net.authors.first
     end
     
     should "be able to find author names if multiple classes applied to container" do
       @net = Dragnet::Dragger.drag!(load_data('microformat'))
-      assert_equal "Chris Harris", @net.author
+      assert_equal "Chris Harris", @net.authors.first
     end
     
     # For people adhering to google's markup standard outlined here:
     # http://googlewebmastercentral.blogspot.com/2011/06/authorship-markup-and-web-search.html
     should "find authors with google's authorship markup" do
       @net = Dragnet::Dragger.drag!(load_data('ny-times-article'))
-      assert_equal "Sam Dolnick", @net.author
+      assert_equal "Sam Dolnick", @net.authors.first
     end
     
     should "return nil if no author" do
       @net = Dragnet::Dragger.drag!(load_data('the-fix'))
-      assert_nil @net.author
+      assert_equal 0, @net.authors.size
     end
     
-    # 
     should "be able to parse strings for author's name" do
       @net = Dragnet::Dragger.drag!(load_data('caller-times'))
-      assert_equal "Alan Sculley", @net.author
+      assert_equal "Alan Sculley", @net.authors.first
+    end
+    
+    should "be able to extract multiple author's names" do
+      @net = Dragnet::Dragger.drag!(load_data('westwood-patch'))
+      assert_equal 2, @net.authors.size
+      assert @net.authors.include?("Jeff Sullivan")
+      assert @net.authors.include?("Matt Perkins")
     end
   end
 end

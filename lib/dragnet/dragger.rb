@@ -149,7 +149,7 @@ module Dragnet
     
     attr_reader :content
     attr_reader :links
-    attr_reader :author
+    attr_reader :authors
     attr_reader :title
     
     def self.drag!(html)
@@ -175,12 +175,12 @@ module Dragnet
       @title = @doc.at('//title').content rescue nil
       @links = []
       @high_score = -1
-      @author = nil
+      @authors = []
       parse!
     end
     
     def parse!
-      @author = find_author(@doc)
+      find_authors(@doc)
       # First try to extract the content as a microformat
       @content = parse_as_microformat(@doc)
       unless @content.nil?
@@ -335,32 +335,34 @@ module Dragnet
     
     private
     
-      def find_author(doc)
-        author = nil
+      def find_authors(doc)
         # Try to find vcard first
-        auth_name_container = doc.css('.vcard .fn')
-        if auth_name_container && auth_name_container.size > 0
-          author = auth_name_container[0].content.strip
+        auth_name_containers = doc.css('.vcard .fn')
+        if auth_name_containers && auth_name_containers.size > 0
+          auth_name_containers.each do |ele|
+            @authors << ele.content.strip
+          end
         end
         
         # Next attempt to find google's "authorship" markup
         doc.css('a').each do |link|
           if link[:rel] == 'author'
-            author = link.content 
-            break
+            @authors << link.content
           end
         end
         
-        if author
-          author = titleize(author)
-          # Parse out extra text like "Written By Joe Blow"
-          regexp = /(written )?by ([a-z]+ [a-z]+).*/i
-          if match = author.match(regexp)
-            author = match[2]
+        if @authors.size > 0
+          @authors.each_with_index do |author, i|
+            @authors[i] = titleize(author)
+            # Parse out extra text like "Written By Joe Blow"
+            regexp = /(written )?by ([a-z]+ [a-z]+).*/i
+            if match = @authors[i].match(regexp)
+              @authors[i] = match[2]
+            end
           end
         end
-        # Titleize author
-        return author
+        
+        @authors.uniq!
       end
     
       def parse_as_microformat(doc)
